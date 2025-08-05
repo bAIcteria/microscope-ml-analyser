@@ -1,0 +1,24 @@
+nr.,
+xpix., - współrzedna x środka w px
+ypix., - współrzędne y środka w px
+xmm, - współrzedna x środka w mm
+ymm, - współrzędne y środka w mm
+powierzchniamm, - powierzchnia dopasowanej elipsy/ zamaskowanego obszaru
+długośćmm, - długość dopasowanej elipsy
+szerokośćmm, - szerokość dopasowanej elipsy
+kąt,obwódmm, - kąt przechylenia dopasowanej elipsy względem początkowej rotacji
+obwód_c.mm, - obwód dopasowanej elipsy
+średnica_fereta_hmm, - patrzymy na maskę - sprawdzamy wysokość prostokąta na niej opisanej
+średnica_fereta_vmm, - patrzymy na maskę - sprawdzamy szerokość prostokąta na niej opisanej
+średn._martinamm, - długość lini dzielącej rzut cząstki na dwie części o tej samej powierzchni - tylko pod jakim kątem ja umieścić - dla 
+uprostrzenia przyjmijmy że jest to wielka oś dopasowanej elipsy 
+średn._sitowamm, - średnika koła o powierzchni powierzchniamm
+średnia_jaskrawość, - średnia jasność obiektu
+r, - średnia wartość kanału czerwonego
+g, - średnia wartość kanału zielonego
+b, - średnia wartość kanału niebieskiego
+y, - średnia luminancja (0.299R + 0.587G + 0.114B np. ale nie wiem z jakiego wzoru)
+liczenie_obiektow_w, - liczba obiektow wykrytych na zdjęciu
+udzial_punktow, - myślę że jest to % udział powierzchni oznaczonych punktów w stosunku do całkowitego pola obraze, ale w raportach zawsze wynosi on 0?
+pole_obrazu_mm2 - po prostu pole widzenia w mm
+1,509,949,50.9,94.9,0.29,0.72111026,0.36055513,56.31,1.72912679,1.68611864,0.6,0.7,0.4,0.4472136,208.6,62.8,94.3,122.7,87.5,38,100.0,12288.0

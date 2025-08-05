@@ -1,0 +1,183 @@
+1. Znikają wszystkie kolumny poza:
+x(pix.):	
+y(pix.):
+powierzchnia:(mm˛)	
+długość:(mm)	
+szerokość:(mm)
+2. Pierwszy x pix i y pix zmienione na 30 i 2
+3. Ustalenie nazw kolumn:
+powierzchnia:(mm˛) - Pp	
+długość:(mm) - D
+szerokość:(mm) - S
+**Swoją drogą - bierzemy max 5000 kolumn
+4. Filtrowanie po drugiej kolumnie (D?)
+Wyniki >= 0.2 mają być oznaczone przez 1
+5. Filtrowanie po Trzeciej kolumnie (S?)
+Wyniki <= 1.5 mają być oznaczone przez 1
+6. To co przetrwało filtrowanie przeklejamy 
+dalej
+7. To co przetrwało filtrowanie przeklejamy 
+dalej po raz drugi i to cofamy bo się pomyliliśmy
+8. Tworzymy formułę Pw =
+=(3.14*(WK[-1]/2)^2)+(W[-1]K[-1]*(WK[-2]-WK[-1]))
+=(3.14*(S/2)^2)+(S*(D-S))
+9. Tworzymy formułę R = Pw/Pp
+10. Otwieramy filtr na D,S,Pw,R:
+R <= 1.2
+11. Kopiujemy 4 kolumny dalej??
+12. Tworzymy formułę Dk = D oraz Sk = S
+13. Formuła Ob =
+=(3.14*(S4^3)/6)+(3.14*((S4^2)/4)*(R4-S4))
+=(3.14*(Sk^3)/6)+(3.14*((Sk^2)/4)*(Dk-Sk))
+14. Formuła D/S = Dk/Sk
+15. Otwieramy filtr na 4 ostatnie kolumny:
+Dk
+Sk
+Ob >0
+D/S
+16. Spełniające kopiujemy dalej i cofamy xdd, filtr też
+
+17. Otwieramy filtr na 4 ostatnie kolumny:
+Dk
+Sk
+Ob
+D/S <= 1.5
+
+18. Przekopiowujemy przefiltr.
+ Dk,Sk oraz Ob na AA,AB,AC
+19. na AA,AB,AC dajemy filtr:
+Dk
+Sk
+Ob <= 0.1
+20. Kopiujemy te trzy rzeczy kawałke dalej
+21. Schemat powtarzamy dla:
+>0.1 <=0.2
+>0.2 <=0.5
+>0.5 <=1
+>1
+
+22. Aplikujemy filtr na R-U
+Dk
+Sk
+Ob
+D/S > 1.5
+
+23. Wyniki kopiujemy do BA-BC
+Dk
+Sk
+Ob
+
+24. Standardowa procedura filtrowania po 
+objętościach jak w pkt. 19:
+Ob <= 0.1
+>0.1 <=0.2
+>0.2 <=0.5
+>0.5 <=1
+>1
+
+25. Odpalamy filtr na J-M:
+D
+S
+Pw
+R > 1.2
+
+26. S i Pw kopiujemy na CA i CB
+27. Formuła Dk (CC) = S (CA)
+28. Formuła Sk (CD) = Pw (CD)*0.8
+29. Ob (CE)=
+=(3.14*(CD4^3)/6)+(3.14*(CD4^2)/4)*(CC4-CD4)
+=(3.14*(Sk^3)/6)+(3.14*(Sk^2)/4)*(Dk-Sk)
+
+30. Filtr na CC-CE:
+Dk
+Sk
+Ob > 0
+31. Dk,Sk,Ob kopiujemy na CE-CG
+32. NAkładamy filtr na CE-CG:
+Dk
+Sk
+Ob > 0
+32. Przekopiuj CE-CG na CH-CJ 
+jak spełniają filtr i później usuń???
+33. Ustawienie filtru na CE-CG:
+Dk
+Sk
+Ob <= 0.1
+34. Standardowa procedura kubełkowania:
+Ob <= 0.1
+>0.1 <=0.2
+>0.2 <=0.5
+>0.5 <=1
+>1
+
+
+35. Budujemy tabelę:
+Bakterie - średnia długość - R4-R1500
+PAłeczki- średnia długość - BA4-BA1500
+Bakterie - średnia długość - R4-R1500
+Ziarniaki - średnia długość - AA4-AA1500
+Krzywe - średnia długość - CE4-CE512 - dziwne
+
+Mamy wypełnioną długośc, szerokośc ,objętość
+
+Liczenei ogółem:
+D4 >0 (licz jeżeli) - dłogość?
+BAkterie:
+G > 0
+- przeskalowujemy do 1 ml
+np.
+=((H2004*48097.39)/10)/(DM2002)
+=(((liczba w 10 polach)*48097.39)/10)/(Liczba ml w polu?)
+Pałeczki BA4-BA1501 -ile
+Ziarniaki AA4-AA507 -ile
+Krzywe CE4-CE513 -ile
+
+Obliczenie co ile procent całości zajmuje
+- pod kątem liczebności
+
+Biomasa:
+Bakterie:
+=(104.5*Q2004^0.59)*0.86)*I2004)/1000000
+=(104.5*(średnia objętość)^0.59)*0.86)
+*(liczba w ml))/1000000
+
+Węgiel komórkowi i białko
+BIałko:
+= 104.5 * (Q2004^0.59)
+= 104.5 * ((średnia objętość)^0.59)
+Węgiel:
+ = I2027*0.86
+ = (liczba w 1 ml)*0.86
+
+Biomasa bakterii - nadpisanie wyników dodawaniem z
+z masy Pałeczek, Ziarniaków i Krzywych
+
+Na lewo od każdego wiersza robimy:
+=((I2006+1)/I2004)*LOG((I2006+1)/I2004)
+=(((liczba kokr. typu bakterii w 1 ml)+1)/(liczba bakteri w 1 ml))*LOG(((liczba kokr. typu bakterii w 1 ml)+1)/(liczba bakteri w 1 ml))
+Wywalamy tą statystykędla wszystkich bakterii, ziarniaków, pałeczek i krzywych
+Dodajemy wskażnik shannona = suma z utworzonej przed chwilą kolumny * -1
+
+
+
+
+Klasyfikacja w skrócie:
+1. Wywalamy rekordy z długością mniejszą od 0.2 oraz szerwosocią większą od 1.5
+2. Definicje
+S - Szerokośc
+D - Długość
+Pp = Pole powierzchni 
+Pw=(3.14*(S/2)^2)+(S*(D-S))
+R = Pw/Pp = (3.14*(S/2)^2)+(S*(D-S))/Pp
+Dk = D (przy klasyfikacji)
+Dk = S (przy klasyfikacji)
+D/S = Dk/Sk = D/S
+3. Klasyfikacja
+- R > 1.2 CA (Krzywe)
+- R <= 1.2 && D/S <= 1.5 AA (Ziarniaki)
+- R <= 1.2 && D/S > 1.5 BA (Pałeczki)
+
+
+
+
+
