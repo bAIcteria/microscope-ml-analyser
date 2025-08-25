@@ -1997,12 +1997,12 @@
 																																																																																																																				
 																																																																																																																				
 																																																																																																																				
-						Zbadano	w	Liczba		D³ugoœæ			Szerokoœæ			Objêtoœæ			Biomasa																																																																																																	
-						6	10	w wodzie	%	œrednia	min.	max	œrednia	min.	max	œrednia	min.	max	C bakt.																																																																																																	
-						ml wody	polach	w 1 ml		mm	mm	mm	mm	mm	mm	mm^3	mm^3	mm^3	mg/l																																																																																																Wpisz iloœæ wody (ml)	6
-						Ogó³em	50	40081																																																																																																												
+						Zbadano	w	Liczba		Dï¿½ugoï¿½ï¿½			Szerokoï¿½ï¿½			Objï¿½toï¿½ï¿½			Biomasa																																																																																																	
+						6	10	w wodzie	%	ï¿½rednia	min.	max	ï¿½rednia	min.	max	ï¿½rednia	min.	max	C bakt.																																																																																																	
+						ml wody	polach	w 1 ml		mm	mm	mm	mm	mm	mm	mm^3	mm^3	mm^3	mg/l																																																																																																Wpisz iloï¿½ï¿½ wody (ml)	6
+						Ogï¿½em	50	40081																																																																																																												
 					50	Bakterie	51	40883		1.0955	0.1342	5.7047	0.5567	0.1342	0.9396	0.2951	0.0174	1.9380	1.56																																																																																																	
-				34	17	Pa³eczki		13900	34.00	1.4489	0.5369	5.7047	0.5053	0.1342	0.8725	0.3781	0.0174	1.9380	0.70																																																																																																	
+				34	17	Paï¿½eczki		13900	34.00	1.4489	0.5369	5.7047	0.5053	0.1342	0.8725	0.3781	0.0174	1.9380	0.70																																																																																																	
 			-0.11051015	12	6	<0.1		4906	12.00	0.8166	0.5369	1.2752	0.3132	0.1342	0.4027	0.0515	0.0174	0.0940	0.08																																																																																																	
 			-0.147870178	8	4	0.1-0.2		3271	8.00	0.8893	0.7383	1.0738	0.5034	0.4698	0.5369	0.1434	0.1008	0.1589	0.09																																																																																																	
 			-0.087769007	8	4	0.2-0.5		3271	8.00	1.1242	0.9396	1.2752	0.6040	0.6040	0.6040	0.2643	0.2114	0.3076	0.13																																																																																																	
@@ -2021,10 +2021,10 @@
 			-0.034010328	2	1	0.5-1.0		818	2.00	0.9396	0.9396	0.9396	1.7147	1.7147	1.7147	0.8494	0.8494	0.8494	0.07																																																																																																	
 			-0.000112799	0	0	>1.0		0	0.00	#DZIEL/0!	0.0000	0.0000	#DZIEL/0!	0.0000	0.0000	#DZIEL/0!	0.0000	0.0000	#DZIEL/0!																																																																																																	
 							Simon																																																																																																													
-							Wêgiel	Bia³ko	WskaŸnik																																																																																																											
-							komórkowy	komórkowe	Shannona																																																																																																											
+							Wï¿½giel	Biaï¿½ko	Wskaï¿½nik																																																																																																											
+							komï¿½rkowy	komï¿½rkowe	Shannona																																																																																																											
 							fg/kom.	fg/kom.																																																																																																												
 						Bakterie	43.74593	50.86736	1.08																																																																																																											
-						Pa³eczki	50.62866	58.87054																																																																																																												
+						Paï¿½eczki	50.62866	58.87054																																																																																																												
 						Ziarniaki	36.00801	41.86978																																																																																																												
 						Krzywe	29.21426	33.97006																																																																																																												
