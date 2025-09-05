@@ -9,6 +9,7 @@ from PyQt5.QtGui import QPixmap
 import cv2
 from ultralytics import YOLO
 from PyQt5.QtWidgets import QSlider
+import pandas as pd
 from PyQt5.QtWidgets import QCheckBox
 
 from models import model_operations
@@ -31,8 +32,6 @@ class AnalyseOneImageUI(QWidget):
 
         # Left column with action buttons
         left_layout = QVBoxLayout()
-
-
 
         # Manual threshold checkbox
         self.manual_thresh_checkbox = QCheckBox("Manual threshold")
@@ -73,18 +72,20 @@ class AnalyseOneImageUI(QWidget):
 
         self.btn_autoselect = QPushButton("Apply autoselection")
         btn_manual = QPushButton("Manual selection")
+        self.btn_update_result = QPushButton("Update results")
         self.btn_report = QPushButton("Generate report")
+        self.btn_all_tresh = QPushButton("Save results for all treshs")
 
         self.btn_autoselect.clicked.connect(self.apply_autoselection)
 
         self.btn_report.clicked.connect(self.save_csv_report)
+        self.btn_update_result.clicked.connect(self.generate_csv_report)
+        self.btn_all_tresh.clicked.connect(self.generate_result_for_each_treshold)
 
-        for btn in [self.btn_autoselect, btn_manual, self.btn_report]:
+        for btn in [self.btn_autoselect, btn_manual,self.btn_update_result, self.btn_report,self.btn_all_tresh]:
             btn.setMinimumHeight(40)
             left_layout.addWidget(btn)
 
-
-        
         self.report_results_label = QLabel(f"Report results: \nFirst apply autoselection")
         left_layout.addWidget(self.report_results_label)
 
@@ -170,12 +171,20 @@ class AnalyseOneImageUI(QWidget):
         self.processed_image_path = save_path
         self.generate_csv_report()
 
-    def generate_csv_report(self):
+    def generate_csv_report(self,optional_tresh=None):
         if not self.processed_image_path or not os.path.exists(self.processed_image_path):
             QMessageBox.warning(self, "No processed image", "Please run autoselection first.")
             return
         
-        self.report_df = model_operations.get_results_df(self.image_path,self.results)
+
+        treshold = None
+        if self.manual_thresh_checkbox.checkState() == Qt.Checked:
+            treshold = self.thresh_slider.value()
+            print(f"common_tresh: {self.thresh_slider.value()}")
+        if optional_tresh != None:
+            treshold = optional_tresh
+        
+        self.report_df = model_operations.get_results_df(self.image_path,self.results,common_tresh=treshold)
 
         specified_types_count_predicted,df = model_operations.full_analyse(self.report_df,proube_volume_ml=6,is_pred=True)
 
@@ -191,6 +200,45 @@ class AnalyseOneImageUI(QWidget):
         if fname:
             self.report_df.to_csv(f"{fname}.csv",index=False)
             QMessageBox.information(self, "Saved", f"Processed report saved to:\n{fname}.csv")
+    
+    def generate_result_for_each_treshold(self):
+        all_results = []
+
+        # Collect all possible bacteria types across thresholds
+        all_types = set()
+        for i in range(1, 255):
+            self.report_df = model_operations.get_results_df(self.image_path, self.results, common_tresh=i)
+            specified_types_count_predicted, df = model_operations.full_analyse(
+                self.report_df, proube_volume_ml=6, is_pred=True
+            )
+            all_types.update(specified_types_count_predicted["bacteria_type"].tolist())
+        all_types = sorted(list(all_types))
+
+        # Collect counts for each threshold
+        for i in range(1, 255):
+            self.report_df = model_operations.get_results_df(self.image_path, self.results, common_tresh=i)
+            specified_types_count_predicted, df = model_operations.full_analyse(
+                self.report_df, proube_volume_ml=6, is_pred=True
+            )
+
+            # Ensure all bacteria types are present
+            df_complete = pd.DataFrame({"bacteria_type": all_types})
+            df_complete = df_complete.merge(specified_types_count_predicted, on="bacteria_type", how="left")
+            df_complete["count"] = df_complete["count"].fillna(0)
+            df_complete["threshold"] = i
+            all_results.append(df_complete)
+
+        # Concatenate all thresholds
+        df_all = pd.concat(all_results, ignore_index=True)
+
+        # Pivot: thresholds as rows, bacteria types as columns
+        df_pivot = df_all.pivot_table(index="threshold", columns="bacteria_type", values="count", fill_value=0)
+
+        # Optional: reset index so threshold becomes a column
+        df_pivot.reset_index(inplace=True)
+
+        df_pivot.to_csv("all_result_for_tresh1-255_pivoted.csv", index=False)
+
 
 
     def save_processed_image(self):
@@ -215,6 +263,8 @@ class AnalyseOneImageUI(QWidget):
         self.thresh_value_label.setText(f"Threshold: {value}")
         if not self.image_path:
             return
+        if self.report_results:
+            self.report_results = self.generate_csv_report(optional_tresh=value)
 
         # Generate overlay using manual threshold
         threshold_value, mask, overlay = model_operations.get_tresh_mask_for_img(self.image_path, fixed=value)

@@ -267,7 +267,8 @@ def analyze_bacterium_from_image(original_image_path, scale_factor_mm_per_pixel,
                 key=cv2.contourArea
             )
         except:
-            threshold_value, mask = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            return None # nothing was found - optionaly we can try use local masking #TODO
+            # threshold_value, mask = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     else:
         threshold_value, mask = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -426,7 +427,7 @@ def analyze_bacterium_from_image(original_image_path, scale_factor_mm_per_pixel,
         
     return results
 
-def get_results_df(full_image_path,results):
+def get_results_df(full_image_path,results,common_tresh=None):
     image = cv2.imread(full_image_path)
 
     results_list = []
@@ -459,7 +460,7 @@ def get_results_df(full_image_path,results):
             }
 
 
-    common_tresh,commmon_mask,overlay = get_tresh_mask_for_img(full_image_path)
+    common_tresh,commmon_mask,overlay = get_tresh_mask_for_img(full_image_path,fixed=common_tresh)
 
     # Ensure results[0] contains bounding boxes in format [x1, y1, x2, y2]
     for i, box in enumerate(results[0]):
@@ -481,7 +482,7 @@ def get_results_df(full_image_path,results):
             analysis_results = analyze_bacterium_from_image(cropped_path, scale_mm_per_px, total_image_area_mm2,x_pos=(x1+x2)/2,y_pos=image.shape[0]-(y1+y2)/2,bacteria_index=i+1,common_tresh=common_tresh)
 
 
-            if analysis_results:
+            if analysis_results and analysis_results != None:
                 for result in analysis_results:
                     results_list.append(result)
             else:
@@ -609,6 +610,9 @@ def get_shannon_index(result_bio_stats):
     return np.sum(result_bio_stats['bio_diversity'])*-1
 
 def full_analyse(df,proube_volume_ml=6,is_pred = False):
+    if len(df) == 0:
+        return pd.DataFrame(columns=["bacteria_type","count"]),pd.DataFrame()
+
     df = preprocess_df(df)
     df = get_individual_stats(df,is_pred=is_pred)
     result = get_stats_for_bacteria_types(df,probe_volume_ml=proube_volume_ml)
