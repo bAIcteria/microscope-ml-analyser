@@ -9,6 +9,7 @@ from PyQt5.QtGui import QPixmap
 import cv2
 from ultralytics import YOLO
 from PyQt5.QtWidgets import QSlider
+from PyQt5.QtWidgets import QCheckBox
 
 from models import model_operations
 
@@ -21,6 +22,7 @@ class AnalyseOneImageUI(QWidget):
         self.image_path = None
         self.processed_image_path = None 
         self.confidence_level = 0.5
+        self.report_results = ""
         self.init_ui()
 
     def init_ui(self):
@@ -29,6 +31,28 @@ class AnalyseOneImageUI(QWidget):
 
         # Left column with action buttons
         left_layout = QVBoxLayout()
+
+
+
+        # Manual threshold checkbox
+        self.manual_thresh_checkbox = QCheckBox("Manual threshold")
+        self.manual_thresh_checkbox.stateChanged.connect(self.toggle_manual_threshold)
+        left_layout.addWidget(self.manual_thresh_checkbox)
+
+        # Threshold slider (hidden by default)
+        self.thresh_slider = QSlider(Qt.Horizontal)
+        self.thresh_slider.setMinimum(0)
+        self.thresh_slider.setMaximum(255)
+        self.thresh_slider.setValue(127)
+        self.thresh_slider.setTickPosition(QSlider.TicksBelow)
+        self.thresh_slider.setTickInterval(10)
+        self.thresh_slider.valueChanged.connect(self.update_manual_threshold_preview)
+        self.thresh_slider.setVisible(False)
+        left_layout.addWidget(self.thresh_slider)
+
+        self.thresh_value_label = QLabel(f"Threshold: {self.thresh_slider.value()}")
+        self.thresh_value_label.setVisible(False)
+        left_layout.addWidget(self.thresh_value_label)
 
         # Confidence slider
         conf_label_title = QLabel("Confidence level:")
@@ -49,13 +73,20 @@ class AnalyseOneImageUI(QWidget):
 
         self.btn_autoselect = QPushButton("Apply autoselection")
         btn_manual = QPushButton("Manual selection")
-        btn_report = QPushButton("Generate report")
+        self.btn_report = QPushButton("Generate report")
 
         self.btn_autoselect.clicked.connect(self.apply_autoselection)
 
-        for btn in [self.btn_autoselect, btn_manual, btn_report]:
+        self.btn_report.clicked.connect(self.save_csv_report)
+
+        for btn in [self.btn_autoselect, btn_manual, self.btn_report]:
             btn.setMinimumHeight(40)
             left_layout.addWidget(btn)
+
+
+        
+        self.report_results_label = QLabel(f"Report results: \nFirst apply autoselection")
+        left_layout.addWidget(self.report_results_label)
 
         left_layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
@@ -64,6 +95,9 @@ class AnalyseOneImageUI(QWidget):
         self.image_label = QLabel("No image selected")
         self.image_label.setAlignment(Qt.AlignCenter)
         self.image_label.setStyleSheet("border: 1px solid gray; background: #fafafa;")
+
+        self.image_label.setScaledContents(True)
+
         center_layout.addWidget(self.image_label)
 
         btn_select_image = QPushButton("Select Image")
@@ -97,8 +131,8 @@ class AnalyseOneImageUI(QWidget):
         if not pixmap.isNull():
             # Scale to fit available label size
             scaled_pixmap = pixmap.scaled(
-                self.image_label.width(),
-                self.image_label.height(),
+                self.image_label.width()-2,
+                self.image_label.height()-2,
                 Qt.KeepAspectRatio,
                 Qt.SmoothTransformation
             )
@@ -106,14 +140,14 @@ class AnalyseOneImageUI(QWidget):
         else:
             self.image_label.setText("Could not load image")
 
-    # def resizeEvent(self, event):
-    #     """Rescale image dynamically when window is resized."""
-    #     if self.image_label.pixmap():
-    #         if self.processed_image_path and os.path.exists(self.processed_image_path):
-    #             self.show_image(self.processed_image_path)
-    #         elif self.image_path:
-    #             self.show_image(self.image_path)
-    #     super().resizeEvent(event)
+    def resizeEvent(self, event):
+        """Rescale image dynamically when window is resized."""
+        if self.image_label.pixmap():
+            if self.processed_image_path and os.path.exists(self.processed_image_path):
+                self.show_image(self.processed_image_path)
+            elif self.image_path:
+                self.show_image(self.image_path)
+        super().resizeEvent(event)
 
     def apply_autoselection(self):
         if not self.image_path:
@@ -123,7 +157,7 @@ class AnalyseOneImageUI(QWidget):
         save_path = os.path.join(os.path.dirname(self.image_path), "detected_image.jpg")
 
         # Run YOLO detection
-        model_operations.get_searching_results(
+        self.results = model_operations.get_searching_results(
             self.image_path, 
             confidence_level=self.confidence_level, 
             save_path=save_path, 
@@ -134,6 +168,30 @@ class AnalyseOneImageUI(QWidget):
         self.show_image(save_path)
         self.btn_save_image.setEnabled(True)
         self.processed_image_path = save_path
+        self.generate_csv_report()
+
+    def generate_csv_report(self):
+        if not self.processed_image_path or not os.path.exists(self.processed_image_path):
+            QMessageBox.warning(self, "No processed image", "Please run autoselection first.")
+            return
+        
+        self.report_df = model_operations.get_results_df(self.image_path,self.results)
+
+        specified_types_count_predicted,df = model_operations.full_analyse(self.report_df,proube_volume_ml=6,is_pred=True)
+
+        self.report_results = specified_types_count_predicted[["bacteria_type", "count"]].to_string(index=False)
+        self.report_results_label.setText(f"Report results:\n{self.report_results}")
+
+    def save_csv_report(self):
+        if not self.report_df:
+            QMessageBox.warning(self, "No processed image", "Please run autoselection first.")
+            return
+
+        fname, _ = QFileDialog.getSaveFileName(self, "Save Processed Report", "", "Report (*.csv)")
+        if fname:
+            self.report_df.to_csv(f"{fname}.csv",index=False)
+            QMessageBox.information(self, "Saved", f"Processed report saved to:\n{fname}.csv")
+
 
     def save_processed_image(self):
         if not self.processed_image_path or not os.path.exists(self.processed_image_path):
@@ -144,6 +202,26 @@ class AnalyseOneImageUI(QWidget):
         if fname:
             cv2.imwrite(fname, cv2.imread(self.processed_image_path))
             QMessageBox.information(self, "Saved", f"Processed image saved to:\n{fname}")
+
+    def toggle_manual_threshold(self, state):
+        # Show slider only if checkbox is checked
+        manual = state == Qt.Checked
+        self.thresh_slider.setVisible(manual)
+        self.thresh_value_label.setVisible(manual)
+        if manual and self.image_path:
+            self.update_manual_threshold_preview(self.thresh_slider.value())
+
+    def update_manual_threshold_preview(self, value):
+        self.thresh_value_label.setText(f"Threshold: {value}")
+        if not self.image_path:
+            return
+
+        # Generate overlay using manual threshold
+        threshold_value, mask, overlay = model_operations.get_tresh_mask_for_img(self.image_path, fixed=value)
+        # Save to a temporary file to display
+        temp_path = os.path.join(os.path.dirname(self.image_path), "manual_thresh_preview.jpg")
+        cv2.imwrite(temp_path, overlay)
+        self.show_image(temp_path)
 
 
 
