@@ -178,18 +178,22 @@ class AnalyseOneImageUI(QWidget):
         
 
         treshold = None
+        individual_tresh = True
         if self.manual_thresh_checkbox.checkState() == Qt.Checked:
             treshold = self.thresh_slider.value()
+            individual_tresh = False
             print(f"common_tresh: {self.thresh_slider.value()}")
         if optional_tresh != None:
             treshold = optional_tresh
+            individual_tresh = False
         
-        self.report_df = model_operations.get_results_df(self.image_path,self.results,common_tresh=treshold)
+        self.report_df = model_operations.get_results_df(self.image_path,self.results,common_tresh=treshold,individual_tresh=individual_tresh)
 
-        specified_types_count_predicted,df = model_operations.full_analyse(self.report_df,proube_volume_ml=6,is_pred=True)
+        specified_types_count_predicted,df,shannon_index = model_operations.full_analyse(self.report_df,proube_volume_ml=6,is_pred=True)
 
         self.report_results = specified_types_count_predicted[["bacteria_type", "count"]].to_string(index=False)
-        self.report_results_label.setText(f"Report results:\n{self.report_results}")
+        self.report_results_groups = df.to_string(index=False)
+        self.report_results_label.setText(f"Report results:\n{self.report_results}\nShannon index: {shannon_index}")
 
     def save_csv_report(self):
         if not self.report_df:
@@ -208,7 +212,7 @@ class AnalyseOneImageUI(QWidget):
         all_types = set()
         for i in range(1, 255):
             self.report_df = model_operations.get_results_df(self.image_path, self.results, common_tresh=i)
-            specified_types_count_predicted, df = model_operations.full_analyse(
+            specified_types_count_predicted, df,shannon_index = model_operations.full_analyse(
                 self.report_df, proube_volume_ml=6, is_pred=True
             )
             all_types.update(specified_types_count_predicted["bacteria_type"].tolist())

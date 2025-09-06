@@ -427,7 +427,7 @@ def analyze_bacterium_from_image(original_image_path, scale_factor_mm_per_pixel,
         
     return results
 
-def get_results_df(full_image_path,results,common_tresh=None):
+def get_results_df(full_image_path,results,common_tresh=None,individual_tresh=False):
     image = cv2.imread(full_image_path)
 
     results_list = []
@@ -459,8 +459,8 @@ def get_results_df(full_image_path,results,common_tresh=None):
                 'pole_obrazu_mm2': []
             }
 
-
-    common_tresh,commmon_mask,overlay = get_tresh_mask_for_img(full_image_path,fixed=common_tresh)
+    if not individual_tresh:
+        common_tresh,commmon_mask,overlay = get_tresh_mask_for_img(full_image_path,fixed=common_tresh)
 
     # Ensure results[0] contains bounding boxes in format [x1, y1, x2, y2]
     for i, box in enumerate(results[0]):
@@ -621,4 +621,4 @@ def full_analyse(df,proube_volume_ml=6,is_pred = False):
     shannon_index = np.sum(result_bio_stats['bio_diversity'])*-1
     print(f"Shannon index: {shannon_index}")
 
-    return specified_types_count_predicted,df
+    return specified_types_count_predicted,df,shannon_index
