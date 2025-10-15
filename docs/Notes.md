@@ -87,6 +87,26 @@ Celem projektu jest stworzenie narzędzia będącego ekwiwalentem programu słu�
 ## 08.09.2025 - czyszczenie folderów
  - metoda słożąca na trenowaniu modelu do przewidywania powiarzchni bakterii nie działa (oparta na sieciach CNN)
 
+## 15.10.2025 team meeting 21:20 - ???
+ - Pytania:
+  - Magiczne liczby we wzorach: 
+   - biomasa = białko * węgiel / 1000000,
+   - białko = 104,5 * objętość^0.59 
+   - węgiel = 0,86 * objętość
+   - W literaturze nie udało nam się znależć tych liczb/ są inne 
+  - Jak powstała stała 48097.39 używana do obliczenia
+  ilości bakterii w jednym ml wody? Czy ma ona związek z metodą Thomy'ego (komora Thoma).Stała ta reprezentuje współczynnik przeliczeniowy komory Thomy’ego czyli wymiary pola siatki oraz objętość warstwy wody pod szkiełkiem nakrywkowym, tak aby z policzonej średniej liczby bakterii w polu widzenia można było obliczyć liczbę bakterii w 1 ml wody. Jest jeszcze druga opcja - metoda Neubauera - wzór podobny.
+  - W jaki sposób zostało przyjęte ktryterium podziału
+  na krzywe pałeczki oraz ziarniaki? Czy stosunek dłogości do szerokości na posiomie 1,5 jest w środowisku naukowym uważany za granicę między ziarniakami i pałeczkami czy też jest to raczej wartość umowna? Tak samo sprawa wygląda w przypadku współczynnika R (pole powierzchni elipsy o wymiarach dłogośc na szerokośc bakterii podzielona przez jej rzeczywistą powierzchnie) ustawionego na poziomie 1.2 jest uznawane za granice między krzywymi, a ziarniakami i pałeczkami? patrząc na wykres R vs D/S nie widać rzadnych twardych granic w tych miejscach. 
+  - Dlaczego skalowanie obrazu nie jest liniowe? Dłogość oraz szerokość jest dzielona przez 1.49, a powierzchnia przez 2.235 (2.235 > 1.49^2 = 2.2201).
+  - Z użyciem jakiego algorytmu liczona jest długość oraz szerokośc bakterii? Czy polega on na znalezieniu maksymalnego wymiaru bakterii (dłogość) i następnie znalezienia maksymalnego wymiaru prostopadłego do niego (szerokość) czy też całość działa w inny sposób? Jeśli chodzi o długośc to wyniki wychodzą nam bardzo bliskie do tych podawanych przed program. Problem jest natomiast z liczeniem szerokości. Wynosi ona czesto zaledwie kilka pikseli więc nawet małe różnice w sposobie pomiaru wpływają znacząco na wynik.
+  - Dlaczego w przypadku krzywych jako ich długość przyjmujemy ich szerokość, a jako ich szerokość Pw * 0.8 ('Pw' = 3.14*(szerokosc/2)**2+szerokosc*(dlugosc-szerokosc)).
+
+  - Literatura mile widziana
+
+ - trzeba wrzucić to do worda i ładnie opisać, wraz z potrzebnymi screenami
+ - przesłać do Pani Kasi
+
 ## Literature
 - https://www.mvi-inc.com/wp-content/uploads/80i-Instruction-Manual.pdf
 - https://www.nikonusa.com/fileuploads/pdfs/Digital%20Sight%20Series%20062005.pdf?srsltid=AfmBOopwVtTNL-nvItahE82CrKjrcwGQqZday2kDNpGfKavrtE8yu7Dq
